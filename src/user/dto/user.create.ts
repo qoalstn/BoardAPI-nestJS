@@ -2,7 +2,7 @@ import { IsDate, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateUser {
   @IsString() 
-  @IsNotEmpty() 
+  @IsNotEmpty()
   readonly user_id : string; 
 
   @IsString()

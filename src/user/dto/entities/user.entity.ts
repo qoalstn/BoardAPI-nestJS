@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert } from "typeorm";
+import * as bcrypt from 'bcrypt';
 
 @Entity({name : 'nest_board_user'})
 export class UserEntity {
@@ -16,4 +17,10 @@ export class UserEntity {
 
   @CreateDateColumn()
   user_regdate : Date;
+
+  @BeforeInsert()
+  async hashPassword() {
+      this.user_pw = await bcrypt.hash(this.user_pw, 10);
+  }
+
 }
