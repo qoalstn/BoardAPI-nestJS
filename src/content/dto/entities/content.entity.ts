@@ -1,26 +1,26 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 //content
-@Entity({name : 'nest_board_content'})
+@Entity({ name: 'nest_board_content' })
 export class ContentEntity {
   @PrimaryGeneratedColumn()
-  id : number;
+  id: number;
 
-  @Column('varchar', {unique : true, length:20, nullable:false})
-  user_id : string;
+  @Column('int', {nullable: true})
+  user_id: number;
 
-  @Column('varchar', {nullable:true, length:200})
-  content_img : string;
+  @Column('varchar',  {nullable: true})
+  content_img: string;
 
-  @Column('varchar', {length:20})
-  content_tag : string;
+  @Column('varchar',  {nullable: true})
+  content_tag: string;
 
-  @Column('varchar', {unique : true, length:200})
-  content_text : string;
+  @Column('text',  {nullable: true})
+  content_text: string;
 
   @CreateDateColumn()
-  comment_regdate : Date;
+  comment_regdate: Date;
 
   @UpdateDateColumn()
-  comment_updatedate : Date;
+  comment_updatedate: Date;
 }

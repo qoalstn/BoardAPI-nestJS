@@ -9,7 +9,7 @@ export class UserEntity {
   @Column('varchar', {unique : true, length:20, nullable:false})
   user_id : string;
 
-  @Column('varchar', {length:20, nullable:false})
+  @Column('varchar', {length:100, nullable:false})
   user_pw : string;
 
   @Column('varchar', {unique : true, length:30, nullable:false})
@@ -18,9 +18,11 @@ export class UserEntity {
   @CreateDateColumn()
   user_regdate : Date;
 
+  
   @BeforeInsert()
   async hashPassword() {
       this.user_pw = await bcrypt.hash(this.user_pw, 10);
+      console.log('UserEntity - user_pw'+this.user_pw)
   }
 
 }

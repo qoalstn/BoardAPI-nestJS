@@ -9,20 +9,15 @@ import { timeStamp } from 'node:console';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Get()
-  // getHello(): string {
-  //   return this.appService.getHello();
-  // }
-
 
   @Get('/')
   async findAll() {
     return await this.userService.getAllUser();
   }
 
-  @Get('/:user_id')
-  async getUser(@Param('user_id') user_id : string){
-    return await this.userService.getUser(user_id)
+  @Get('/:id')
+  async getUser(@Param('id') id : string){
+    return await this.userService.findOne(id)
   }
 
   @Post('/new')
@@ -32,11 +27,13 @@ export class UserController {
 
   @Patch('update/:id')
   async updateUser(@Param('id') id : number, @Body() userData: UpdateUser){
+    // console.log("deleteUser - controller")
     return await this.userService.updateUser(id, userData);
   }
 
-  @Delete('/delete/:user_id')
-  async deleteUser(@Param('user_id') user_id: string) {
-    return await this.userService.deleteUser(user_id)
+  @Delete('/delete/:id')
+  async deleteUser(@Param() id: number) {
+    console.log("deleteUser - controller")
+    return await this.userService.deleteUser(id)
   }
 }

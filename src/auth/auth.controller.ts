@@ -1,23 +1,18 @@
-import { Controller, Get, UseGuards, Body, Post } from '@nestjs/common';
+import { Controller, Get, UseGuards, Body, Post, Request, Req } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LoginCredential } from './dto/login-credential.dto'
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('token')
-  async createToken(@Body() body : LoginCredential): Promise<any> {
-    return await this.authService.createToken(body);
+
+  @Post('login')
+  async login(@Body() body : LoginCredential, @Req() req) : Promise<any> {
+    return await this.authService.login(body);
+    
   }
-
-  @Get('data')
-  @UseGuards(AuthGuard('jwt'))
-  findAll() {
-    // this route is restricted
-  }
-
-
 
 }

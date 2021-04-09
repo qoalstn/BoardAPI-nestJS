@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 
 //comment
 @Entity({name : 'nest_board_comment'})
@@ -6,20 +6,27 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
     @PrimaryGeneratedColumn()
     id : number;
 
-    @Column('varchar', {unique : true, length:20, nullable:false})
-    user_id : string;
+    @Column('int', {nullable:false})
+    user_id : number;
 
-    @Column('varchar', {unique : true, length:100, nullable:false})
+    @Column('int', { nullable:false})
+    content_id : number;
+
+    @Column('varchar', {length:100, nullable:false})
     comment_text : string;
 
-    @Column('varchar', {unique : true, length:20})
-    comment_like : string;
+    @Column('int')
+    comment_like : number;
 
     @CreateDateColumn()
     comment_regdate : Date;
 
     @UpdateDateColumn()
     comment_updatedate : Date;
+
+  //   @OneToMany(type => Photo, photo => photo.user)
+  //   photos: Photo[]
+  // }
   }
 
 

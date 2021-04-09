@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
 import { ContentModule } from './content/content.module';
-import { AppController } from './--app.controller'
+import { AppController } from './app.controller'
 import { AuthModule } from './auth/auth.module'
 import { MulterModule } from '@nestjs/platform-express';
+import { AppService } from './app.service';
 // import { AppService } from './--app.service'
 
 @Module({
@@ -18,7 +19,7 @@ import { MulterModule } from '@nestjs/platform-express';
       password: 'admin',
       database: 'todolist',
       entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
-      synchronize: false,
+      synchronize: true,
     }),
     MulterModule.register({
       dest: './uploads',
@@ -29,6 +30,7 @@ import { MulterModule } from '@nestjs/platform-express';
     AuthModule
   ],
   controllers: [AppController],
+  providers : [AppService]
 
 })
 export class AppModule {}

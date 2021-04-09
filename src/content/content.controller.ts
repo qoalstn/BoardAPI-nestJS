@@ -1,37 +1,33 @@
 import { Controller, Get, Post,UseInterceptors, UploadedFile, UploadedFiles, Res, Param, HttpStatus, UseGuards, Body, Req } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { AuthGuard } from 'src/utils/guard';
 import { editFileName, imageFilter } from '../utils/file_upload';
 import { ContentService } from './content.service';
 import { ContentDto } from './dto/content.dto';
 // import { editFileName, imageFilter } from '../utils/file_upload';
 
-@Controller('files')
+@Controller('content')
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
-  // upload single file
-  @UseGuards(AuthGuard)
-  @Post()
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploads/',
-        filename: editFileName,
-      }),
-      fileFilter: imageFilter,
-    }),
-  )
-  async uploadedFile(@Body() body:ContentDto, @Req() req, @UploadedFile() file) {
-    console.log(req);
-    const data = await this.contentService.uploadFile(body, file);
-    return data;
+
+  @Get()
+  // @UseGuards(JwtAuthGuard) 
+  async getContents () {
+    const comment = await this.contentService.getComment()
+    const content = await this.contentService.getContent()
+    console.log(comment,content)
   }
 
-  @Post('uploadMultipleFiles')
+  // upload single file
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard) 
+  @Post('insert')
   @UseInterceptors(
-    FilesInterceptor('image', 10, {
+    FileInterceptor('image', {
       storage: diskStorage({
         destination: './uploads',
         filename: editFileName,
@@ -39,21 +35,33 @@ export class ContentController {
       fileFilter: imageFilter,
     }),
   )
-  async uploadMultipleFiles(@UploadedFiles() files) {
-    const response = [];
-    files.forEach(file => {
-      const fileReponse = {
-        originalname: file.originalname,
-        filename: file.filename,
-      };
-      response.push(fileReponse);
-    });
-    return {
-      status: HttpStatus.OK,
-      message: 'Images uploaded successfully!',
-      data: response,
-    };
+  async uploadedFile(@Body() body:ContentDto, @Req() req, @UploadedFile() file) {
+    console.log(req.user);
+    const data = await this.contentService.uploadFile(body, file, req.user['user_id']);
+    return data;
   }
+
+
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard) 
+  @Post('update/:id')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: editFileName,
+      }),
+      fileFilter: imageFilter,
+    }),
+  )
+  async updateContent(@Param('id') id : number, @Body() body:ContentDto, @UploadedFile() file) {
+    const data = await this.contentService.updateContent(id, body, file);
+    return data;
+  }
+
+
+
 
   @Get(':imagename')
   getImage(@Param('imagename') image, @Res() res) {

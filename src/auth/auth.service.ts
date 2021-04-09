@@ -2,43 +2,34 @@ import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UserService,
+    private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) { }
 
-  // getHello(): string {
-  //   return 'Hello World!';
-  // }
 
+  async login(body) {
+    const user = await this.userService.findOne(body.user_id);
+    const check = await bcrypt.compare(body.user_pw, user.user_pw);
 
-  async createToken(body) {
-    const user: JwtPayload = { user_id: body.user_id, user_pw: body.user_pw };
-    const accessToken = this.jwtService.sign(user);
-    console.log(accessToken);
-    return {
-      expiresIn: 3600000,
-      accessToken,
-    };
-  }
+    if (check) {
+      const payload: JwtPayload = { id: user['id'], user_id: body.user_id, user_pw: body.user_pw };
 
-
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
-    if (user && user.user_pw === pass) {
-      const { user_pw, ...result } = user;
-      return result;
+      return {
+        expiresIn: 36000,
+        access_token: this.jwtService.sign(payload),
+      };
+    } else {
+      return '로그인 정보가 일치하지 않습니다.'
     }
-    return null;
   }
 
-  async login(user: any) {
-    const payload = { username: user.user_id, sub: user.user_pw };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
-  }
+
+
+
 }
