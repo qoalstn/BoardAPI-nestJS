@@ -39,8 +39,8 @@ export class CommentService {
       .insert()
       .values([
         {
-          user_id: user.id,
-          content_id : content.id,
+          mem_id: user.mem_id,
+          content_id : content.content_id,
           comment_text : body.comment_text,
           comment_like: body.comment_like
         }

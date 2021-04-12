@@ -18,7 +18,8 @@ export class AuthService {
     const check = await bcrypt.compare(body.user_pw, user.user_pw);
 
     if (check) {
-      const payload: JwtPayload = { id: user['id'], user_id: body.user_id, user_pw: body.user_pw };
+      const payload: JwtPayload = { id: user.mem_id, user_id: body.user_id, user_pw: body.user_pw };
+      console.log(payload);
 
       return {
         expiresIn: 36000,

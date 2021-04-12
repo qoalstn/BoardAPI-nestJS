@@ -15,11 +15,9 @@ export class ContentController {
 
 
   @Get()
-  // @UseGuards(JwtAuthGuard) 
   async getContents () {
-    const comment = await this.contentService.getComment()
-    const content = await this.contentService.getContent()
-    console.log(comment,content)
+    const data = await this.contentService.getContent();
+    return data;
   }
 
   // upload single file

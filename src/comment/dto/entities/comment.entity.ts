@@ -1,13 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from "typeorm";
+import { ContentEntity } from '../../../content/dto/entities/content.entity'
 
 //comment
 @Entity({name : 'nest_board_comment'})
   export class CommentEntity {
     @PrimaryGeneratedColumn()
-    id : number;
+    comment_id : number;
 
     @Column('int', {nullable:false})
-    user_id : number;
+    mem_id : number;
 
     @Column('int', { nullable:false})
     content_id : number;
@@ -24,9 +25,7 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
     @UpdateDateColumn()
     comment_updatedate : Date;
 
-  //   @OneToMany(type => Photo, photo => photo.user)
-  //   photos: Photo[]
-  // }
+ 
   }
 
 

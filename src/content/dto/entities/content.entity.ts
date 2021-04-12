@@ -1,13 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { UserEntity } from "src/user/dto/entities/user.entity";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
 
 //content
 @Entity({ name: 'nest_board_content' })
 export class ContentEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  content_id: number;
 
   @Column('int', {nullable: true})
-  user_id: number;
+  mem_id: number;
 
   @Column('varchar',  {nullable: true})
   content_img: string;
@@ -23,4 +24,21 @@ export class ContentEntity {
 
   @UpdateDateColumn()
   comment_updatedate: Date;
+
+  @ManyToOne(type  => UserEntity, {cascade:true, onDelete: 'CASCADE'})
+  @JoinColumn({
+    name: 'mem_id',
+    referencedColumnName: 'mem_id',
+    
+  })
+  user : UserEntity;
+
 }
+
+
+  // @ManyToOne(() => UserEntity)
+  // @JoinColumn({
+  //   name: 'user_id',
+  //   referencedColumnName: 'user_id',
+  // })
+  // option: UserEntity;

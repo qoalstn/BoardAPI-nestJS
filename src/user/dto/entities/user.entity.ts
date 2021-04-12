@@ -1,10 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert, OneToMany, JoinColumn } from "typeorm";
 import * as bcrypt from 'bcrypt';
+import { ContentEntity } from "src/content/dto/entities/content.entity";
 
 @Entity({name : 'nest_board_user'})
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  id : number;
+  mem_id : number;
 
   @Column('varchar', {unique : true, length:20, nullable:false})
   user_id : string;
@@ -25,4 +26,19 @@ export class UserEntity {
       console.log('UserEntity - user_pw'+this.user_pw)
   }
 
+  @OneToMany((type) => ContentEntity, c => c.user, {onDelete: "CASCADE"})
+  @JoinColumn({
+    name:'mem_id',
+    referencedColumnName:'mem_id'
+  })
+  contents: ContentEntity[];
 }
+
+
+
+  // @OneToMany(() => ContentEntity, (i) => (i).user_id)
+  // @JoinColumn({
+  //   name: 'user_id',
+  //   referencedColumnName: 'user_id',
+  // })
+  // photos: ContentEntity[]
