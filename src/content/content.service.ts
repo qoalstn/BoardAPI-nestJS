@@ -5,7 +5,7 @@ import { ContentDto } from './dto/content.dto';
 import { ContentEntity } from './dto/entities/content.entity';
 import { ContentRepository } from './dto/repository/content.repository';
 
-@Injectable() // 이 데코레이터가 있으며 모듈로 import를 해줘야 쓸 수 있고 없으면 경로로 import할 수 있는건가.
+@Injectable() 
 export class ContentService {
   constructor(
     private contentRepository: ContentRepository,
@@ -22,12 +22,8 @@ export class ContentService {
     return this.contentRepository.find();
   }
 
-  async getComment () {
-  return await this.commentRepository
-    .createQueryBuilder()
-    .getMany();
-    
-  }
+
+
   async getContent () {
     return await this.contentRepository.findOne({where: {content_id:2}, relations: ['user']})
   }
@@ -49,6 +45,12 @@ export class ContentService {
       return '등록에 성공하였습니다.'
   }
 
+
+  //글 목록 불러오기
+  async getContent_Comment() {
+    return await this.commentRepository      
+    }
+  
 
   // async uploadContent(body: ContentDto, file, user_id: string) {
   //   const user = await this.userService.findOne(user_id);

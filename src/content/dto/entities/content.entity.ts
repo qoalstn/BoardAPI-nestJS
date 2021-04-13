@@ -1,5 +1,6 @@
+import { CommentEntity } from "src/comment/dto/entities/comment.entity";
 import { UserEntity } from "src/user/dto/entities/user.entity";
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 
 //content
 @Entity({ name: 'nest_board_content' })
@@ -28,10 +29,16 @@ export class ContentEntity {
   @ManyToOne(type  => UserEntity, {cascade:true, onDelete: 'CASCADE'})
   @JoinColumn({
     name: 'mem_id',
-    referencedColumnName: 'mem_id',
-    
+    referencedColumnName: 'mem_id',    
   })
   user : UserEntity;
+
+  // @OneToMany((type) => CommentEntity, c => c.comment, {onDelete: "CASCADE"})
+  // @JoinColumn({
+  //   name:'comment_id',
+  //   referencedColumnName:'comment_id'
+  // })
+  // comments: CommentEntity[];
 
 }
 

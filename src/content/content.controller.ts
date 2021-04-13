@@ -60,14 +60,10 @@ export class ContentController {
 
 
 
-
-  @Get(':imagename')
-  getImage(@Param('imagename') image, @Res() res) {
-    const response = res.sendFile(image, { root: './uploads' });
-    return {
-      status: HttpStatus.OK,
-      data: response,
-    };
+  @Get('user/:id')
+  async getImage(@Param('id') id : any, @Req() Req) {
+    console.log(id)
+    return await this.contentService.findAll()
   }
 }
 

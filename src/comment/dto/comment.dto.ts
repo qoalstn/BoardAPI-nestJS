@@ -2,8 +2,8 @@ import { IsNotEmpty } from 'class-validator';
 
 //content
 export class CommentDto {
-    
-    user_id : number;
+
+    mem_id : number;
 
     content_id : number;
 

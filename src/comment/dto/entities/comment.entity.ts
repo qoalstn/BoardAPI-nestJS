@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToOne } from "typeorm";
 import { ContentEntity } from '../../../content/dto/entities/content.entity'
+import { UserEntity } from "src/user/dto/entities/user.entity";
 
 //comment
 @Entity({name : 'nest_board_comment'})
@@ -25,7 +26,19 @@ import { ContentEntity } from '../../../content/dto/entities/content.entity'
     @UpdateDateColumn()
     comment_updatedate : Date;
 
- 
+    @ManyToOne(type  => UserEntity, {cascade:true, onDelete: 'CASCADE'})
+    @JoinColumn({
+      name: 'mem_id',
+      referencedColumnName: 'mem_id',    
+    })
+    user : UserEntity;
+
+    // @ManyToOne(type  => ContentEntity, {cascade:true, onDelete: 'CASCADE'})
+    // @JoinColumn({
+    //   name: 'comment_id',
+    //   referencedColumnName: 'comment_id',    
+    // })
+    // comment : ContentEntity;
   }
 
 

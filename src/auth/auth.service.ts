@@ -10,25 +10,46 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
 
-  async login(body) {
+
+  async validateUser(body) {
     const user = await this.userService.findOne(body.user_id);
     const check = await bcrypt.compare(body.user_pw, user.user_pw);
-
-    if (check) {
-      const payload: JwtPayload = { id: user.mem_id, user_id: body.user_id, user_pw: body.user_pw };
-      console.log(payload);
-
-      return {
-        expiresIn: 36000,
-        access_token: this.jwtService.sign(payload),
-      };
-    } else {
-      return '로그인 정보가 일치하지 않습니다.'
+    if (user && check) {
+      const { user_pw, ...result } = user;
+      console.log(result)
+      return result;
     }
+    return '존재하지 않는 유저';
   }
+
+  async login(user: any) {
+    console.log(user)
+    const payload = { id: user.mem_id, user_id: user.user_id, sub: user.mem_id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+
+  // async login(body) {
+  //   const user = await this.userService.findOne(body.user_id);
+  //   const check = await bcrypt.compare(body.user_pw, user.user_pw);
+
+  //   if (check) {
+  //     const payload: JwtPayload = { id: user.mem_id, user_id: body.user_id, user_pw: body.user_pw };
+  //     console.log(payload);
+
+  //     return {
+  //       expiresIn: 36000,
+  //       access_token: this.jwtService.sign(payload),
+  //     };
+  //   } else {
+  //     return '로그인 정보가 일치하지 않습니다.'
+  //   }
+  // }
 
 
 

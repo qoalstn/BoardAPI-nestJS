@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CommentRepository } from './dto/repository/comment.repository';
-import { CommentDto } from './comment.dto'
+
 import { CommentEntity } from './dto/entities/comment.entity';
 import { ContentEntity } from 'src/content/dto/entities/content.entity';
 import { ContentRepository } from 'src/content/dto/repository/content.repository';
 import { UserRepository } from 'src/user/dto/repository/user.repository';
+import { CommentDto } from './dto/comment.dto';
+import { ContentDto } from 'src/content/dto/content.dto';
 // import { CommentRepository } from '../_dao/--repository';
 
 @Injectable()
@@ -25,22 +27,32 @@ export class CommentService {
     return this.commentRepository.find();
   }
 
-  findOne(id: number): Promise<ContentEntity> {
-    return this.contentRepository.findOne(id);
+  // findOne(id: number): Promise<ContentEntity> {
+  //   const data = this.contentRepository.findOne({
+  //     where: { content_id },
+  //     relations: ['users'],
+  //   });
+  // }
+
+  findOne_user(id: number): Promise<ContentEntity> {
+    return this.contentRepository.findOne({
+      
+    });
   }
 
 
-  async sendComment (body : CommentDto, id ) {
-    const user = await this.userRepository.findOne(id);
-    const content = await this.contentRepository.findOne(id);
-    console.log(content)
+
+
+
+
+  async sendComment (body : CommentDto, req ) { 
     await this.commentRepository
       .createQueryBuilder()
       .insert()
       .values([
         {
-          mem_id: user.mem_id,
-          content_id : content.content_id,
+          mem_id: req.user.id,
+          content_id : body.content_id,
           comment_text : body.comment_text,
           comment_like: body.comment_like
         }
