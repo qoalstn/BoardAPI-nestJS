@@ -3,10 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
 import { ContentModule } from './content/content.module';
-import { AppController } from './app.controller'
-import { AuthModule } from './auth/auth.module'
+import { AppController } from './app.controller';
+import { AuthModule } from './auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { AppService } from './app.service';
+import { type } from 'node:os';
 // import { AppService } from './--app.service'
 
 @Module({
@@ -27,10 +28,9 @@ import { AppService } from './app.service';
     UserModule,
     CommentModule,
     ContentModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
-  providers : [AppService]
-
+  providers: [AppService],
 })
 export class AppModule {}

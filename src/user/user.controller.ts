@@ -1,14 +1,13 @@
 import { Body, Controller, Get, Param, Patch, Post, Delete, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUser } from '../user/dto/user.create'
-import { UpdateUser } from '../user/dto/user.update'
+import { CreateUser } from '../user/dto/user.create';
+import { UpdateUser } from '../user/dto/user.update';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { LoginCredential } from 'src/auth/dto/login-credential.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
-
+  constructor(private readonly userService: UserService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get('/')
@@ -19,7 +18,7 @@ export class UserController {
   //회원가입
   @Post('/new')
   async createUser(@Body() userData: CreateUser) {
-    await this.userService.createUser(userData)
+    await this.userService.createUser(userData);
   }
 
   //정보수정
@@ -31,16 +30,16 @@ export class UserController {
 
   //내 게시글 조회
   @UseGuards(JwtAuthGuard)
-  @Get('/:id')
-  async getUser_Content(@Param('id') mem_id: number) {
-    return await this.userService.getUser_Content(mem_id)
+  @Get('/content')
+  async getUser_Content(@Req() req) {
+    return await this.userService.getUser_Content(req.user.id);
   }
 
   //내 댓글 조회
   @UseGuards(JwtAuthGuard)
-  @Get('comments/:id')
-  async getUser_Comment(@Param('id') id: string) {
-    return await this.userService.getUser_Comment(id)
+  @Get('comment')
+  async getUser_Comment(@Req() req) {
+    return await this.userService.getUser_Comment(req.user.id);
   }
 
   //회원 탈퇴
@@ -50,4 +49,17 @@ export class UserController {
     return await this.userService.deleteUser(mem_id, req);
   }
 
+  //팔로우
+  @UseGuards(JwtAuthGuard)
+  @Post('follow/:mem_id')
+  async follow(@Param('mem_id') mem_id: number, @Req() req) {
+    return await this.userService.follow(mem_id, req);
+  }
+
+  //언팔로우
+  @UseGuards(JwtAuthGuard)
+  @Delete('follow/:mem_id')
+  async unfollow(@Param('mem_id') mem_id: number, @Req() req) {
+    return await this.userService.unfollow(mem_id, req);
+  }
 }

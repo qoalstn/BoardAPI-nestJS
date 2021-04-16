@@ -1,23 +1,36 @@
-import { CommentEntity } from "src/comment/dto/entities/comment.entity";
-import { UserEntity } from "src/user/dto/entities/user.entity";
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
+import { CommentEntity } from 'src/comment/dto/entities/comment.entity';
+import { UserEntity } from 'src/user/dto/entities/user.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+  Like,
+  BaseEntity,
+} from 'typeorm';
 
 //content
 @Entity({ name: 'nest_board_content' })
-export class ContentEntity {
+export class ContentEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   content_id: number;
 
-  @Column('int', {nullable: true})
+  @Column('int')
   mem_id: number;
 
-  @Column('varchar',  {nullable: true})
+  @Column('varchar')
   content_img: string;
 
-  @Column('varchar',  {nullable: true})
+  @Column('varchar')
   content_tag: string;
 
-  @Column('text',  {nullable: true})
+  @Column('text')
   content_text: string;
 
   @CreateDateColumn()
@@ -26,26 +39,42 @@ export class ContentEntity {
   @UpdateDateColumn()
   comment_updatedate: Date;
 
-  @ManyToOne(type  => UserEntity, {cascade:true, onDelete: 'CASCADE'})
+  @ManyToOne((type) => UserEntity, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({
     name: 'mem_id',
-    referencedColumnName: 'mem_id',    
+    referencedColumnName: 'mem_id',
   })
-  user : UserEntity;
+  user: UserEntity;
 
-  // @OneToMany((type) => CommentEntity, c => c.comment, {onDelete: "CASCADE"})
-  // @JoinColumn({
-  //   name:'comment_id',
-  //   referencedColumnName:'comment_id'
-  // })
-  // comments: CommentEntity[];
+  @OneToMany(() => CommentEntity, (c) => c.comments)
+  @JoinColumn({
+    name: 'content_id',
+    referencedColumnName: 'comment_id',
+  })
+  content: CommentEntity[];
 
+  @ManyToMany(() => UserEntity, { cascade: true })
+  @JoinTable({
+    name: 'content_like',
+    joinColumns: [
+      {
+        name: 'content_id',
+        referencedColumnName: 'content_id',
+      },
+    ],
+    inverseJoinColumns: [
+      {
+        name: 'mem_id',
+        referencedColumnName: 'mem_id',
+      },
+    ],
+  })
+  users: UserEntity[];
 }
 
-
-  // @ManyToOne(() => UserEntity)
-  // @JoinColumn({
-  //   name: 'user_id',
-  //   referencedColumnName: 'user_id',
-  // })
-  // option: UserEntity;
+// @ManyToOne(() => UserEntity)
+// @JoinColumn({
+//   name: 'user_id',
+//   referencedColumnName: 'user_id',
+// })
+// option: UserEntity;

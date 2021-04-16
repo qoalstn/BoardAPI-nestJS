@@ -1,8 +1,23 @@
-import { Controller, Get, Post,UseInterceptors, UploadedFile, UploadedFiles, Res, Param, HttpStatus, UseGuards, Body, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  UploadedFiles,
+  Res,
+  Param,
+  HttpStatus,
+  UseGuards,
+  Body,
+  Req,
+  Delete,
+} from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UserService } from 'src/user/user.service';
 import { AuthGuard } from 'src/utils/guard';
 import { editFileName, imageFilter } from '../utils/file_upload';
 import { ContentService } from './content.service';
@@ -11,18 +26,20 @@ import { ContentDto } from './dto/content.dto';
 
 @Controller('content')
 export class ContentController {
-  constructor(private readonly contentService: ContentService) {}
-
+  constructor(
+    private readonly contentService: ContentService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get()
-  async getContents () {
+  async getContents() {
     const data = await this.contentService.getContent();
     return data;
   }
 
-  // upload single file
+  // 게시글 업로드
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard) 
+  @UseGuards(JwtAuthGuard)
   @Post('insert')
   @UseInterceptors(
     FileInterceptor('image', {
@@ -33,16 +50,15 @@ export class ContentController {
       fileFilter: imageFilter,
     }),
   )
-  async uploadedFile(@Body() body:ContentDto, @Req() req, @UploadedFile() file) {
-    console.log(req.user);
+  async uploadedFile(@Body() body: ContentDto, @Req() req, @UploadedFile() file) {
+    console.log(req.user.id);
     const data = await this.contentService.uploadFile(body, file, req.user['user_id']);
     return data;
   }
 
-
-
+  //게시글 수정
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard) 
+  @UseGuards(JwtAuthGuard)
   @Post('update/:id')
   @UseInterceptors(
     FileInterceptor('image', {
@@ -53,133 +69,33 @@ export class ContentController {
       fileFilter: imageFilter,
     }),
   )
-  async updateContent(@Param('id') id : number, @Body() body:ContentDto, @UploadedFile() file) {
+  async updateContent(@Param('id') id: number, @Body() body: ContentDto, @UploadedFile() file) {
     const data = await this.contentService.updateContent(id, body, file);
     return data;
   }
 
+  @Get('comment/:content_id')
+  async getContent_comment(@Param('content_id') content_id: number) {
+    return this.contentService.getContent_comment(content_id);
+  }
 
+  //좋아요
+  @UseGuards(JwtAuthGuard)
+  @Post('like/:conetent_id')
+  async clickLike(@Param('conetent_id') conetent_id: number, @Req() req) {
+    await this.contentService.clickLike(conetent_id, req);
+  }
 
-  @Get('user/:id')
-  async getImage(@Param('id') id : any, @Req() Req) {
-    console.log(id)
-    return await this.contentService.findAll()
+  @UseGuards(JwtAuthGuard)
+  @Delete('/:content_id')
+  async deleteContent(@Param('content_id') content_id, @Req() req) {
+    console.log(req.user.id);
+    return await this.deleteContent(content_id, req.user.id);
+  }
+
+  @Get('user/:content_id')
+  async getImage(@Param('content_id') content_id: any, @Req() Req) {
+    // console.log(content_id)
+    return await this.contentService.findAll();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-// import {
-//   Controller,
-//   Get,
-//   Post,
-//   Body,
-//   UseInterceptors,
-//   UploadedFile,
-//   UploadedFiles,
-//   Res,
-//   Param,
-// } from '@nestjs/common';
-// import { ContentService } from './content.service';
-// import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-// import { diskStorage } from 'multer';
-// import { editFileName, imageFilter } from '../utils/file_upload';
-// import { ContentRepository } from './dto/repository/content.repository';
-
-// @Controller('/content')
-// export class ContentController {
-//   constructor(
-//     private readonly contentRepository : ContentRepository,
-// ){}
-
-//   @Post()
-//   @Body 
-//   @UseInterceptors(
-//     FileInterceptor('image', {
-//       storage: diskStorage({
-//         destination: './files',
-//         filename: editFileName,
-//       }),
-//       fileFilter: imageFilter,
-//     }),
-//   )
-//   async uploadedFile(@UploadedFile() file) {
-//     const response = {
-//       originalname: file.originalname,
-//       filename: file.filename,
-//     };
-//     return response;
-//   }
-
-//   @Post('multiple')
-//   @UseInterceptors(
-//     FilesInterceptor('image', 20, {
-//       storage: diskStorage({
-//         destination: './files',
-//         filename: editFileName,
-//       }),
-//       fileFilter: imageFilter,
-//     }),
-//   )
-//   async uploadMultipleFiles(@UploadedFiles() files) {
-//     const response = [];
-//     files.forEach(file => {
-//       const fileReponse = {
-//         originalname: file.originalname,
-//         filename: file.filename,
-//       };
-//       response.push(fileReponse);
-//     });
-//     return response;
-//   }
-
-//   @Get(':imgpath')
-//   seeUploadedFile(@Param('imgpath') image, @Res() res) {
-//     return res.sendFile(image, { root: './files' });
-//   }
-// }
-
-
-// import {
-//   Body,
-//   Controller,
-//   Get,
-//   Post,
-//   UploadedFile,
-//   UseInterceptors,
-//   UploadedFiles
-// } from '@nestjs/common';
-// import { FileInterceptor } from '@nestjs/platform-express';
-// import { Express } from 'express';
-// import { ContentService } from './content.service';
-// import { ContentEntity } from './dto/entities/content.entity';
-
-// @Controller('/content')
-// export class ContentController {
-//   constructor(private readonly appService: ContentService) {}
-
-//   // @Get()
-//   // sayHello() {
-//   //   return this.appService.getHello();
-//   // }
-
-//   @UseInterceptors(FileInterceptor('file'))
-//   @Post('file')
-//   uploadFile(
-//     @Body() body: ContentEntity,
-//     @UploadedFile() file: Express.Multer.File,
-//   ) {
-//     return {
-//       body,
-//       file: file.buffer.toString(),
-//     };
-//   }
-// }

@@ -54,7 +54,6 @@ export class CommentService {
           mem_id: req.user.id,
           content_id : body.content_id,
           comment_text : body.comment_text,
-          comment_like: body.comment_like
         }
       ]).execute();
       return '등록에 성공하였습니다.'  

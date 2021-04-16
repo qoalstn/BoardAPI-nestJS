@@ -9,12 +9,9 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post()
-  async sendComment (@Body() body, @Req() req) {
-    console.log(body)
-    return await this.commentService.sendComment(body, req)
+  @Post('insert')
+  async sendComment(@Body() body, @Req() req) {
+    console.log(body);
+    return await this.commentService.sendComment(body, req);
   }
-
-
-
 }

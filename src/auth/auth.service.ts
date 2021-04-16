@@ -19,16 +19,16 @@ export class AuthService {
     const check = await bcrypt.compare(body.user_pw, user.user_pw);
     if (user && check) {
       const { user_pw, ...result } = user;
-      console.log(result)
+      // console.log(result)
       return result;
     }
     return '존재하지 않는 유저';
   }
 
   async login(user: any) {
-    console.log(user)
-    const payload = { id: user.mem_id, user_id: user.user_id, sub: user.mem_id };
-    return {
+    const payload = { id: user.mem_id, user_id: user.user_id};
+    // console.log('payload' + payload.id, payload.user_id)
+    return await {
       access_token: this.jwtService.sign(payload),
     };
   }
